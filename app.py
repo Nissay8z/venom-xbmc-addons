@@ -9,8 +9,8 @@ app = Flask(__name__)
 CORS(app)  # autorise les requêtes depuis ton worker
 
 def import_scraper(site_name):
-    # Chemin relatif vers le fichier du scraper
-    file_path = f"plugin.video.vstream/resources/sites/{site_name}.py"
+    # CHEMIN CORRIGÉ ICI
+    file_path = f"resources/sites/{site_name}.py"
     if not os.path.exists(file_path):
         return None
     spec = importlib.util.spec_from_file_location(site_name, file_path)
@@ -25,13 +25,11 @@ def get_streams():
     media_type = request.args.get('type')
     season = request.args.get('s', 1, type=int)
     episode = request.args.get('e', 1, type=int)
-
     if not tmdb_id:
         return jsonify({"error": "Missing id"}), 400
 
     # Liste des scrapers à essayer (dans l'ordre de priorité)
     priority_sites = ['wiflix', 'dpstream', '1seriestreaming', 'voirfilms']
-
     for site in priority_sites:
         module = import_scraper(site)
         if module and hasattr(module, 'getStreams'):
